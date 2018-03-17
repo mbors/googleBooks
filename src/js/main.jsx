@@ -12,7 +12,7 @@ class Volume extends React.Component{
          bookCover: [],
          bookAuthor: [],
          bookTitle: [],
-         error: ""
+         error: "no"
         }
     }
     //get input on the searched book
@@ -56,6 +56,10 @@ class Volume extends React.Component{
                             bookTitle: myBookTitle,
                             error: "no"
                         })
+                   } else {
+                       this.setState({
+                           error: "yes"
+                       })
                    }
                 }
             )
@@ -76,17 +80,22 @@ class Volume extends React.Component{
                  </div>
                )
         })
+    
+        let error
+        if(this.state.error != "no"){
+            error = <span className="error-message">Unfortunately this book cannot be found :(</span>
+        } 
+
         return (
             <div className="parent">
                 <header className="main-header">
                     <div className="container">
-                        <h1 className="heading">Book Volumes</h1>
+                        <h1 className="heading">Google Books</h1>
                     </div>
                 </header>
                 <nav className="main-nav">
                     <div className="container">
-                        <form onSubmit={this.handleSearch}>
-                            <label htmlFor="username">Enter Book Name</label>
+                        <form>
                             <input type="text" placeholder="Book Name"  onChange={this.handleSearchChange}/>
                             <button onClick={this.handleSubmission}>Send data!</button>
                         </form>
@@ -95,7 +104,7 @@ class Volume extends React.Component{
                 <div className="main-section-results">
                     <div className="container">
                         {volumeInfo}
-                        
+                        {error}
                     </div>
                 </div> 
             </div>
