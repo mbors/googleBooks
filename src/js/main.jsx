@@ -48,7 +48,6 @@ class GoogleBooks extends React.Component{
                             myBookAuthor.push(authors);
                             myBookTitle.push(title);
                             myBookPreview.push(preview);
-                            
                         });
 
                         this.setState({
@@ -86,7 +85,8 @@ class GoogleBooks extends React.Component{
         if(this.state.error != "no"){
             error = <span className="error-message">Unfortunately this book cannot be found :(</span>
         } 
-        console.log(this.state.bookCover)
+       
+    
         return (
             <div className="parent">
                 <header className="main-header">

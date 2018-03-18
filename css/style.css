@@ -166,4 +166,6 @@ nav .container input {
     font-size: 17px;
     position: relative; 
     font-weight: bold; 
+    overflow: hidden; 
+    margin-bottom: 5px; 
 }
