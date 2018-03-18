@@ -18,7 +18,7 @@ header .container {
     flex-direction: column;
     justify-content: center;
     text-align: center; 
-    background-image: url("../../img/worn_dots.png")
+    background-image: url("../img/worn_dots.png")
 }
 
 .heading {
@@ -40,7 +40,7 @@ nav .container {
     display: flex;
     justify-content: center;
     flex-direction: row; 
-    background-image: url("../../img/worn_dots.png");
+    background-image: url("../img/worn_dots.png");
     height: 120px;
     
 }
@@ -96,8 +96,8 @@ nav .container input {
     flex-direction: row; 
     flex-wrap: wrap; 
     justify-content: center; 
-    background-image: url("../../img/worn_dots.png");
-     
+    background-image: url("../img/worn_dots.png");
+    
 }
 
 .book-content {
@@ -124,6 +124,7 @@ nav .container input {
     text-decoration: none; 
     padding-top: 17px; 
     color: #D35068; 
+    margin-bottom: 10px; 
 }
 
 .book-content a:after {
@@ -133,7 +134,7 @@ nav .container input {
     height: 1em;
     width: 100%;
     border-bottom: 1px solid;
-    margin-top: 15px;
+    margin-top: 5px;
     margin-bottom: 5px; 
     opacity: 0;
 	-webkit-transition: opacity 0.55s, -webkit-transform 0.55s;
