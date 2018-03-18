@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import idx from 'idx';
-import Pagination from "react-js-pagination";
 
 
-class Volume extends React.Component{
+class GoogleBooks extends React.Component{
     constructor(props){
         super(props)
         this.state = {
@@ -39,10 +38,8 @@ class Volume extends React.Component{
                         let myBookTitle= [];
                         let volumeInfo = [];
                         let myBookPreview = [];
-
-                    console.log(data)
                         const { items } = data;
-
+                    
                         items.forEach(item => {
                             //return an empty string if undefined 
                             const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || 'img/NoBookCover.png';
@@ -53,6 +50,7 @@ class Volume extends React.Component{
                             myBookAuthor.push(authors);
                             myBookTitle.push(title);
                             myBookPreview.push(preview);
+                            
                         });
 
                         this.setState({
@@ -79,9 +77,9 @@ class Volume extends React.Component{
                volumeInfo.push(
                 <div className="book-content">
                     <div className="book-cover"><img src={this.state.bookCover[i]}/></div>
+                    <a href={this.state.bookPreview[i]}>Preview</a>  
                     <div className="book-author">{this.state.bookAuthor[i]}</div>
-                    <div className="book-title">{this.state.bookTitle[i]}</div>
-                    <a href={this.state.bookPreview[i]}>More Details</a>      
+                    <div className="book-title">{this.state.bookTitle[i]}</div>    
                  </div>
                )
         })
@@ -122,7 +120,7 @@ class Volume extends React.Component{
 }
 
 ReactDOM.render(
-    <Volume/>,
+    <GoogleBooks/>,
     document.getElementById('app')
 );
 
