@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import idx from 'idx';
+import Pagination from "react-js-pagination";
 
 
 class Volume extends React.Component{
@@ -12,7 +13,8 @@ class Volume extends React.Component{
          bookCover: [],
          bookAuthor: [],
          bookTitle: [],
-         error: "no"
+         bookPreview: [],
+         error: "no",
         }
     }
     //get input on the searched book
@@ -35,18 +37,22 @@ class Volume extends React.Component{
                         let myBookCover = [];
                         let myBookAuthor = [];
                         let myBookTitle= [];
-                        let volumeInfo = []
+                        let volumeInfo = [];
+                        let myBookPreview = [];
 
+                    console.log(data)
                         const { items } = data;
 
                         items.forEach(item => {
                             //return an empty string if undefined 
-                            const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || '';
-                            const authors = idx(item, _ => _.volumeInfo.authors) || '';
-                            const title = idx(item, _ => _.volumeInfo.title) || '';
+                            const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || 'img/NoBookCover.png';
+                            const authors = idx(item, _ => _.volumeInfo.authors) || 'No Author Information Available';
+                            const title = idx(item, _ => _.volumeInfo.title) || 'No Title Information Available';
+                            const preview = idx(item, _ => _.volumeInfo.previewLink) || '';
                             myBookCover.push(thumbnail);
                             myBookAuthor.push(authors);
                             myBookTitle.push(title);
+                            myBookPreview.push(preview);
                         });
 
                         this.setState({
@@ -54,6 +60,7 @@ class Volume extends React.Component{
                             bookCover: myBookCover,
                             bookAuthor: myBookAuthor,
                             bookTitle: myBookTitle,
+                            bookPreview: myBookPreview, 
                             error: "no"
                         })
                    } else {
@@ -71,12 +78,10 @@ class Volume extends React.Component{
         this.state.bookTitle.forEach((e, i) => {
                volumeInfo.push(
                 <div className="book-content">
-                
                     <div className="book-cover"><img src={this.state.bookCover[i]}/></div>
                     <div className="book-author">{this.state.bookAuthor[i]}</div>
                     <div className="book-title">{this.state.bookTitle[i]}</div>
-                
-                                    
+                    <a href={this.state.bookPreview[i]}>More Details</a>      
                  </div>
                )
         })
@@ -85,7 +90,7 @@ class Volume extends React.Component{
         if(this.state.error != "no"){
             error = <span className="error-message">Unfortunately this book cannot be found :(</span>
         } 
-
+        console.log(this.state.bookCover)
         return (
             <div className="parent">
                 <header className="main-header">
@@ -96,8 +101,8 @@ class Volume extends React.Component{
                 <nav className="main-nav">
                     <div className="container">
                         <form>
-                            <input type="text" placeholder="Book Name"  onChange={this.handleSearchChange}/>
-                            <button onClick={this.handleSubmission}>Send data!</button>
+                            <input type="text" placeholder="What are you looking for?"  onChange={this.handleSearchChange}/>
+                            <button className="btn" onClick={this.handleSubmission}>Search</button>
                         </form>
                     </div>
                 </nav>
@@ -107,6 +112,7 @@ class Volume extends React.Component{
                         {error}
                     </div>
                 </div> 
+         
             </div>
 
         )
