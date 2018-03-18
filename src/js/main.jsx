@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import idx from 'idx';
 
-
 class GoogleBooks extends React.Component{
     constructor(props){
         super(props)
@@ -41,7 +40,6 @@ class GoogleBooks extends React.Component{
                         const { items } = data;
                     
                         items.forEach(item => {
-                            //return an empty string if undefined 
                             const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || 'img/NoBookCover.png';
                             const authors = idx(item, _ => _.volumeInfo.authors) || 'No Author Information Available';
                             const title = idx(item, _ => _.volumeInfo.title) || 'No Title Information Available';
@@ -110,7 +108,6 @@ class GoogleBooks extends React.Component{
                         {error}
                     </div>
                 </div> 
-         
             </div>
 
         )
