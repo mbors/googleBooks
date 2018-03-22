@@ -13,6 +13,7 @@ class GoogleBooks extends React.Component{
          bookTitle: [],
          bookPreview: [],
          error: "no",
+         startIndex: 0
         }
     }
     //get input on the searched book
@@ -22,49 +23,52 @@ class GoogleBooks extends React.Component{
         })
     }
 
+    componentWillUpdate(){
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${this.state.bookSearched}&printType=books&orderBy=newest&maxResults=40&startIndex=${this.state.startIndex}`)
+        .then(resp=>{
+            return resp.json();
+        })
+        .then(data => {
+           if(data.totalItems != 0){
+                let itemsCount = data.items.length; 
+                let myBookCover = [];
+                let myBookAuthor = [];
+                let myBookTitle= [];
+                let volumeInfo = [];
+                let myBookPreview = [];
+                const { items } = data;
+            
+                items.forEach(item => {
+                    const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || 'img/NoBookCover.png';
+                    const authors = idx(item, _ => _.volumeInfo.authors) || 'No Author Information Available';
+                    const title = idx(item, _ => _.volumeInfo.title) || 'No Title Information Available';
+                    const preview = idx(item, _ => _.volumeInfo.previewLink) || '';
+                    myBookCover.push(thumbnail);
+                    myBookAuthor.push(authors);
+                    myBookTitle.push(title);
+                    myBookPreview.push(preview);
+                });
+
+                this.setState({
+                    responseLength: itemsCount,
+                    bookCover: myBookCover,
+                    bookAuthor: myBookAuthor,
+                    bookTitle: myBookTitle,
+                    bookPreview: myBookPreview, 
+                    error: "no"
+                })
+           } else {
+               this.setState({
+                   error: "yes"
+               })
+           }
+        }
+    )
+    }
     //submit button trigers fetching the data from the API
     handleSubmission = (e) =>{
         e.preventDefault();
-        fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${this.state.bookSearched}&printType=books&orderBy=newest&maxResults=40`)
-                .then(resp=>{
-                    return resp.json();
-                })
-                .then(data => {
-                   if(data.totalItems != 0){
-                        let itemsCount = data.items.length; 
-                        let myBookCover = [];
-                        let myBookAuthor = [];
-                        let myBookTitle= [];
-                        let volumeInfo = [];
-                        let myBookPreview = [];
-                        const { items } = data;
-                    
-                        items.forEach(item => {
-                            const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || 'img/NoBookCover.png';
-                            const authors = idx(item, _ => _.volumeInfo.authors) || 'No Author Information Available';
-                            const title = idx(item, _ => _.volumeInfo.title) || 'No Title Information Available';
-                            const preview = idx(item, _ => _.volumeInfo.previewLink) || '';
-                            myBookCover.push(thumbnail);
-                            myBookAuthor.push(authors);
-                            myBookTitle.push(title);
-                            myBookPreview.push(preview);
-                        });
-
-                        this.setState({
-                            responseLength: itemsCount,
-                            bookCover: myBookCover,
-                            bookAuthor: myBookAuthor,
-                            bookTitle: myBookTitle,
-                            bookPreview: myBookPreview, 
-                            error: "no"
-                        })
-                   } else {
-                       this.setState({
-                           error: "yes"
-                       })
-                   }
-                }
-            )
+       
     }
 
 
@@ -106,6 +110,7 @@ class GoogleBooks extends React.Component{
                     <div className="container">
                         {volumeInfo}
                         {error}
+                        <button onClick={this.handlePrevious}>Previous</button><button onClick={this.handleNext}>Next</button>
                     </div>
                 </div> 
             </div>
@@ -120,4 +125,3 @@ ReactDOM.render(
     <GoogleBooks/>,
     document.getElementById('app')
 );
-
