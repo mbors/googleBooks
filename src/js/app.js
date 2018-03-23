@@ -9627,39 +9627,11 @@ var GoogleBooks = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (GoogleBooks.__proto__ || Object.getPrototypeOf(GoogleBooks)).call(this, props));
 
-        _this.handleSearchChange = function (e) {
-            _this.setState({
-                bookSearched: e.target.value
-            });
-        };
-
-        _this.handleSubmission = function (e) {
-            e.preventDefault();
-        };
-
-        _this.state = {
-            bookSearched: "",
-            responseLength: 0,
-            bookCover: [],
-            bookAuthor: [],
-            bookTitle: [],
-            bookPreview: [],
-            error: "no",
-            startIndex: 0
-        };
-        return _this;
-    }
-    //get input on the searched book
-
-
-    _createClass(GoogleBooks, [{
-        key: 'componentWillUpdate',
-        value: function componentWillUpdate() {
-            var _this2 = this;
-
-            fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + this.state.bookSearched + '&printType=books&orderBy=newest&maxResults=40&startIndex=' + this.state.startIndex).then(function (resp) {
+        _this.fetch = function () {
+            fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + _this.state.bookSearched + '&printType=books&orderBy=newest&maxResults=4&startIndex=' + _this.state.startIndex).then(function (resp) {
                 return resp.json();
             }).then(function (data) {
+                console.log(data);
                 if (data.totalItems != 0) {
                     var itemsCount = data.items.length;
                     var myBookCover = [];
@@ -9689,7 +9661,7 @@ var GoogleBooks = function (_React$Component) {
                         myBookPreview.push(preview);
                     });
 
-                    _this2.setState({
+                    _this.setState({
                         responseLength: itemsCount,
                         bookCover: myBookCover,
                         bookAuthor: myBookAuthor,
@@ -9698,18 +9670,65 @@ var GoogleBooks = function (_React$Component) {
                         error: "no"
                     });
                 } else {
-                    _this2.setState({
+                    _this.setState({
                         error: "yes"
                     });
                 }
             });
-        }
-        //submit button trigers fetching the data from the API
+        };
 
-    }, {
+        _this.handleSearchChange = function (e) {
+            _this.setState({
+                bookSearched: e.target.value
+            });
+        };
+
+        _this.handleSubmission = function (e) {
+            e.preventDefault();
+            _this.fetch();
+        };
+
+        _this.handlePrev = function () {
+            if (_this.state.startIndex != 1 && _this.state.pageNumber != 1) {
+                _this.setState({
+                    startIndex: _this.state.startIndex - 4,
+                    pageNumber: _this.state.pageNumber - 1
+                });
+            }
+            _this.fetch();
+        };
+
+        _this.handleNext = function () {
+            _this.setState({
+                startIndex: _this.state.startIndex + 4,
+                pageNumber: _this.state.pageNumber + 1
+            });
+            _this.fetch();
+        };
+
+        _this.state = {
+            bookSearched: "",
+            responseLength: 0,
+            bookCover: [],
+            bookAuthor: [],
+            bookTitle: [],
+            bookPreview: [],
+            error: "no",
+            startIndex: 1,
+            pageNumber: 1
+        };
+        return _this;
+    }
+    //get input on the searched book
+
+
+    //submit button trigers fetching the data from the API
+
+
+    _createClass(GoogleBooks, [{
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this2 = this;
 
             var volumeInfo = [];
             this.state.bookTitle.forEach(function (e, i) {
@@ -9719,22 +9738,22 @@ var GoogleBooks = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'book-cover' },
-                        _react2.default.createElement('img', { src: _this3.state.bookCover[i] })
+                        _react2.default.createElement('img', { src: _this2.state.bookCover[i] })
                     ),
                     _react2.default.createElement(
                         'a',
-                        { href: _this3.state.bookPreview[i] },
+                        { href: _this2.state.bookPreview[i] },
                         'Preview'
                     ),
                     _react2.default.createElement(
                         'div',
                         { className: 'book-author' },
-                        _this3.state.bookAuthor[i]
+                        _this2.state.bookAuthor[i]
                     ),
                     _react2.default.createElement(
                         'div',
                         { className: 'book-title' },
-                        _this3.state.bookTitle[i]
+                        _this2.state.bookTitle[i]
                     )
                 ));
             });
@@ -9743,10 +9762,12 @@ var GoogleBooks = function (_React$Component) {
             if (this.state.error != "no") {
                 error = _react2.default.createElement(
                     'span',
-                    { className: 'error-message' },
+                    { className: 'message' },
                     'Unfortunately this book cannot be found :('
                 );
             }
+
+            console.log(this.state.startIndex);
 
             return _react2.default.createElement(
                 'div',
@@ -9789,15 +9810,24 @@ var GoogleBooks = function (_React$Component) {
                         'div',
                         { className: 'container' },
                         volumeInfo,
-                        error,
+                        error
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'container buttons-container' },
                         _react2.default.createElement(
                             'button',
-                            { onClick: this.handlePrevious },
-                            'Previous'
+                            { className: 'btn', onClick: this.handlePrev },
+                            'Prev'
+                        ),
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'message' },
+                            this.state.pageNumber
                         ),
                         _react2.default.createElement(
                             'button',
-                            { onClick: this.handleNext },
+                            { className: 'btn', onClick: this.handleNext },
                             'Next'
                         )
                     )

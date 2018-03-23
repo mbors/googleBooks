@@ -13,22 +13,18 @@ class GoogleBooks extends React.Component{
          bookTitle: [],
          bookPreview: [],
          error: "no",
-         startIndex: 0
+         startIndex: 1,
+         pageNumber: 1
         }
     }
-    //get input on the searched book
-    handleSearchChange = (e) => {
-        this.setState({
-            bookSearched: e.target.value
-        })
-    }
 
-    componentWillUpdate(){
-        fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${this.state.bookSearched}&printType=books&orderBy=newest&maxResults=40&startIndex=${this.state.startIndex}`)
+    fetch = () => {
+        fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${this.state.bookSearched}&printType=books&orderBy=newest&maxResults=4&startIndex=${this.state.startIndex}`)
         .then(resp=>{
             return resp.json();
         })
         .then(data => {
+           console.log(data)
            if(data.totalItems != 0){
                 let itemsCount = data.items.length; 
                 let myBookCover = [];
@@ -65,10 +61,37 @@ class GoogleBooks extends React.Component{
         }
     )
     }
+    //get input on the searched book
+    handleSearchChange = (e) => {
+        this.setState({
+            bookSearched: e.target.value
+        })
+        
+    }
+
     //submit button trigers fetching the data from the API
     handleSubmission = (e) =>{
         e.preventDefault();
+        this.fetch()
+        }
+        
+    handlePrev = () =>{
+        if(this.state.startIndex != 1 && this.state.pageNumber != 1){
+            this.setState({
+                startIndex: this.state.startIndex - 4,
+                pageNumber: this.state.pageNumber - 1
+            })
        
+        }
+        this.fetch()
+    }
+
+    handleNext = () => {
+        this.setState({
+            startIndex: this.state.startIndex + 4,
+            pageNumber: this.state.pageNumber + 1
+        })
+        this.fetch()
     }
 
 
@@ -87,10 +110,11 @@ class GoogleBooks extends React.Component{
     
         let error
         if(this.state.error != "no"){
-            error = <span className="error-message">Unfortunately this book cannot be found :(</span>
+            error = <span className="message">Unfortunately this book cannot be found :(</span>
         } 
        
-    
+        console.log(this.state.startIndex)
+
         return (
             <div className="parent">
                 <header className="main-header">
@@ -110,7 +134,11 @@ class GoogleBooks extends React.Component{
                     <div className="container">
                         {volumeInfo}
                         {error}
-                        <button onClick={this.handlePrevious}>Previous</button><button onClick={this.handleNext}>Next</button>
+                    </div>
+                    <div className="container buttons-container">
+                        <button className="btn" onClick={this.handlePrev}>Prev</button>
+                        <span className="message">{this.state.pageNumber}</span>
+                        <button className="btn" onClick={this.handleNext}>Next</button>
                     </div>
                 </div> 
             </div>

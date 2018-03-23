@@ -85,7 +85,7 @@ nav .container input {
 
 /* Main Section */
 
-.error-message {
+.message {
     margin-top: -40px;
 }
 
@@ -168,4 +168,10 @@ nav .container input {
     font-weight: bold; 
     overflow: hidden; 
     margin-bottom: 5px; 
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 0; 
 }
