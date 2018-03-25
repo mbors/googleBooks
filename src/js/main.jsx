@@ -15,7 +15,8 @@ class GoogleBooks extends React.Component{
          error: "no",
          startIndex: 0,
          pageNumber: 1,
-         totalItems: 0
+         totalItems: 0,
+         itemsPerPage: 4
         }
     }
 
@@ -24,6 +25,7 @@ class GoogleBooks extends React.Component{
         .then(resp=>{
             return resp.json();
         })
+
         .then(data => {
            console.log(data)
            if(data.totalItems != 0){
@@ -34,6 +36,7 @@ class GoogleBooks extends React.Component{
                 let myBookTitle= [];
                 let volumeInfo = [];
                 let myBookPreview = [];
+        
                 const { items } = data;
             
                 items.forEach(item => {
@@ -62,14 +65,14 @@ class GoogleBooks extends React.Component{
                })
            }
         }
-    )
-    }
-
-    
+    )       
+}
+   
+ 
     //get input on the searched book
     handleSearchChange = (e) => {
         this.setState({
-            bookSearched: e.target.value
+            bookSearched: e.target.value,
         })
         
     }
@@ -78,22 +81,28 @@ class GoogleBooks extends React.Component{
     handleSubmission = (e) =>{
         e.preventDefault();
         this.fetch()
+        this.setState({
+            totalItems: 0, 
+            pageNumber: 1,
+        })
     }
-        
+    
+    
     handlePrev = () =>{
         if(this.state.startIndex > 1 && this.state.pageNumber > 1){
             this.setState({
-                startIndex: this.state.startIndex - 4,
+                startIndex: this.state.startIndex - this.state.itemsPerPage,
                 pageNumber: this.state.pageNumber - 1
             })
         }
     }
 
     handleNext = () => {
-        if(this.state.totalItems / 4 >  this.state.pageNumber){
+        if(this.state.totalItems / this.state.itemsPerPage >  this.state.pageNumber){
             this.setState({
-                startIndex: this.state.startIndex + 4,
-                pageNumber: this.state.pageNumber + 1
+                startIndex: this.state.startIndex + this.state.itemsPerPage,
+                pageNumber: this.state.pageNumber + 1, 
+                bookTitle: []
             })
         }
     }
@@ -105,25 +114,37 @@ class GoogleBooks extends React.Component{
     }
   }
 
-    render(){ 
-        let volumeInfo = [];
-        let responseLength = this.state.res
-        this.state.bookTitle.forEach((e, i) => {
-               volumeInfo.push(
-                <div className="book-content">
-                    <div className="book-cover"><img src={this.state.bookCover[i]}/></div>
-                    <a href={this.state.bookPreview[i]}>Preview</a>  
-                    <div className="book-title">{this.state.bookTitle[i]}</div>    
-                 </div>
-               )
 
-        })
-    
+
+    render(){ 
         let error
+        let volumeInfo = [];
         if(this.state.error != "no"){
-            error = <span className="message">Unfortunately this book cannot be found :(</span>
-        } 
-       
+            error = <span className="message">Unfortunately this book cannot be found :(
+            </span>
+        } else {
+            this.state.bookTitle.forEach((e, i) => {
+                volumeInfo.push(
+                 <div className="book-content">
+                     <div className="book-cover"><img src={this.state.bookCover[i]}/></div>
+                     <a href={this.state.bookPreview[i]}>Preview</a>  
+                     <div className="book-title">{this.state.bookTitle[i]}</div>    
+                </div>
+            )
+         })
+
+        }
+
+        let buttonContainer
+        if(this.state.responseLength != 0 && this.state.error == "no"){
+           buttonContainer =                     
+           <div className="container buttons-container">
+                <button className="btn" onClick={this.handlePrev}>Prev</button>
+                <span onChange={this.handleCounter} className="message">{this.state.pageNumber} out of {Math.ceil(this.state.totalItems / this.state.itemsPerPage)}</span>
+            <button className="btn" onClick={this.handleNext}>Next</button>
+            </div>
+        }
+            
 
         return (
             <div className="parent">
@@ -145,20 +166,13 @@ class GoogleBooks extends React.Component{
                         {volumeInfo}
                         {error}
                     </div>
-                    <div className="container buttons-container">
-                        <button className="btn" onClick={this.handlePrev}>Prev</button>
-                        <span onChange={this.handleCounter} className="message">{this.state.pageNumber}</span>
-                        <button className="btn" onClick={this.handleNext}>Next</button>
-                    </div>
                 </div> 
+                {buttonContainer}
             </div>
 
         )
-
-    }
-   
+     }
 }
-
 ReactDOM.render(
     <GoogleBooks/>,
     document.getElementById('app')

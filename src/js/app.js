@@ -9640,6 +9640,7 @@ var GoogleBooks = function (_React$Component) {
                     var myBookTitle = [];
                     var volumeInfo = [];
                     var myBookPreview = [];
+
                     var items = data.items;
 
 
@@ -9688,22 +9689,27 @@ var GoogleBooks = function (_React$Component) {
         _this.handleSubmission = function (e) {
             e.preventDefault();
             _this.fetch();
+            _this.setState({
+                totalItems: 0,
+                pageNumber: 1
+            });
         };
 
         _this.handlePrev = function () {
             if (_this.state.startIndex > 1 && _this.state.pageNumber > 1) {
                 _this.setState({
-                    startIndex: _this.state.startIndex - 4,
+                    startIndex: _this.state.startIndex - _this.state.itemsPerPage,
                     pageNumber: _this.state.pageNumber - 1
                 });
             }
         };
 
         _this.handleNext = function () {
-            if (_this.state.totalItems / 4 > _this.state.pageNumber) {
+            if (_this.state.totalItems / _this.state.itemsPerPage > _this.state.pageNumber) {
                 _this.setState({
-                    startIndex: _this.state.startIndex + 4,
-                    pageNumber: _this.state.pageNumber + 1
+                    startIndex: _this.state.startIndex + _this.state.itemsPerPage,
+                    pageNumber: _this.state.pageNumber + 1,
+                    bookTitle: []
                 });
             }
         };
@@ -9718,7 +9724,8 @@ var GoogleBooks = function (_React$Component) {
             error: "no",
             startIndex: 0,
             pageNumber: 1,
-            totalItems: 0
+            totalItems: 0,
+            itemsPerPage: 4
         };
         return _this;
     }
@@ -9741,36 +9748,60 @@ var GoogleBooks = function (_React$Component) {
         value: function render() {
             var _this2 = this;
 
-            var volumeInfo = [];
-            var responseLength = this.state.res;
-            this.state.bookTitle.forEach(function (e, i) {
-                volumeInfo.push(_react2.default.createElement(
-                    'div',
-                    { className: 'book-content' },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'book-cover' },
-                        _react2.default.createElement('img', { src: _this2.state.bookCover[i] })
-                    ),
-                    _react2.default.createElement(
-                        'a',
-                        { href: _this2.state.bookPreview[i] },
-                        'Preview'
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'book-title' },
-                        _this2.state.bookTitle[i]
-                    )
-                ));
-            });
-
             var error = void 0;
+            var volumeInfo = [];
             if (this.state.error != "no") {
                 error = _react2.default.createElement(
                     'span',
                     { className: 'message' },
                     'Unfortunately this book cannot be found :('
+                );
+            } else {
+                this.state.bookTitle.forEach(function (e, i) {
+                    volumeInfo.push(_react2.default.createElement(
+                        'div',
+                        { className: 'book-content' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'book-cover' },
+                            _react2.default.createElement('img', { src: _this2.state.bookCover[i] })
+                        ),
+                        _react2.default.createElement(
+                            'a',
+                            { href: _this2.state.bookPreview[i] },
+                            'Preview'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'book-title' },
+                            _this2.state.bookTitle[i]
+                        )
+                    ));
+                });
+            }
+
+            var buttonContainer = void 0;
+            if (this.state.responseLength != 0 && this.state.error == "no") {
+                buttonContainer = _react2.default.createElement(
+                    'div',
+                    { className: 'container buttons-container' },
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn', onClick: this.handlePrev },
+                        'Prev'
+                    ),
+                    _react2.default.createElement(
+                        'span',
+                        { onChange: this.handleCounter, className: 'message' },
+                        this.state.pageNumber,
+                        ' out of ',
+                        Math.ceil(this.state.totalItems / this.state.itemsPerPage)
+                    ),
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn', onClick: this.handleNext },
+                        'Next'
+                    )
                 );
             }
 
@@ -9816,27 +9847,9 @@ var GoogleBooks = function (_React$Component) {
                         { className: 'container' },
                         volumeInfo,
                         error
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'container buttons-container' },
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'btn', onClick: this.handlePrev },
-                            'Prev'
-                        ),
-                        _react2.default.createElement(
-                            'span',
-                            { onChange: this.handleCounter, className: 'message' },
-                            this.state.pageNumber
-                        ),
-                        _react2.default.createElement(
-                            'button',
-                            { className: 'btn', onClick: this.handleNext },
-                            'Next'
-                        )
                     )
-                )
+                ),
+                buttonContainer
             );
         }
     }]);
