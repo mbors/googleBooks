@@ -9634,6 +9634,7 @@ var GoogleBooks = function (_React$Component) {
                 console.log(data);
                 if (data.totalItems != 0) {
                     var itemsCount = data.items.length;
+                    var totalItems = data.totalItems;
                     var myBookCover = [];
                     var myBookAuthor = [];
                     var myBookTitle = [];
@@ -9667,7 +9668,8 @@ var GoogleBooks = function (_React$Component) {
                         bookAuthor: myBookAuthor,
                         bookTitle: myBookTitle,
                         bookPreview: myBookPreview,
-                        error: "no"
+                        error: "no",
+                        totalItems: totalItems
                     });
                 } else {
                     _this.setState({
@@ -9689,21 +9691,21 @@ var GoogleBooks = function (_React$Component) {
         };
 
         _this.handlePrev = function () {
-            if (_this.state.startIndex != 1 && _this.state.pageNumber != 1) {
+            if (_this.state.startIndex > 1 && _this.state.pageNumber > 1) {
                 _this.setState({
                     startIndex: _this.state.startIndex - 4,
                     pageNumber: _this.state.pageNumber - 1
                 });
             }
-            _this.fetch();
         };
 
         _this.handleNext = function () {
-            _this.setState({
-                startIndex: _this.state.startIndex + 4,
-                pageNumber: _this.state.pageNumber + 1
-            });
-            _this.fetch();
+            if (_this.state.totalItems / 4 > _this.state.pageNumber) {
+                _this.setState({
+                    startIndex: _this.state.startIndex + 4,
+                    pageNumber: _this.state.pageNumber + 1
+                });
+            }
         };
 
         _this.state = {
@@ -9714,11 +9716,13 @@ var GoogleBooks = function (_React$Component) {
             bookTitle: [],
             bookPreview: [],
             error: "no",
-            startIndex: 1,
-            pageNumber: 1
+            startIndex: 0,
+            pageNumber: 1,
+            totalItems: 0
         };
         return _this;
     }
+
     //get input on the searched book
 
 
@@ -9726,11 +9730,19 @@ var GoogleBooks = function (_React$Component) {
 
 
     _createClass(GoogleBooks, [{
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (prevState.startIndex != this.state.startIndex) {
+                this.fetch();
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
             var volumeInfo = [];
+            var responseLength = this.state.res;
             this.state.bookTitle.forEach(function (e, i) {
                 volumeInfo.push(_react2.default.createElement(
                     'div',
@@ -9744,11 +9756,6 @@ var GoogleBooks = function (_React$Component) {
                         'a',
                         { href: _this2.state.bookPreview[i] },
                         'Preview'
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'book-author' },
-                        _this2.state.bookAuthor[i]
                     ),
                     _react2.default.createElement(
                         'div',
@@ -9766,8 +9773,6 @@ var GoogleBooks = function (_React$Component) {
                     'Unfortunately this book cannot be found :('
                 );
             }
-
-            console.log(this.state.startIndex);
 
             return _react2.default.createElement(
                 'div',
@@ -9822,7 +9827,7 @@ var GoogleBooks = function (_React$Component) {
                         ),
                         _react2.default.createElement(
                             'span',
-                            { className: 'message' },
+                            { onChange: this.handleCounter, className: 'message' },
                             this.state.pageNumber
                         ),
                         _react2.default.createElement(

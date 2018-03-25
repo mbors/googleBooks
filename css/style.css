@@ -175,3 +175,7 @@ nav .container input {
     flex-direction: row;
     flex-grow: 0; 
 }
+
+.counter {
+   outline: none;    
+}
