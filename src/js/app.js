@@ -9775,6 +9775,11 @@ var GoogleBooks = function (_React$Component) {
                             'div',
                             { className: 'book-title' },
                             _this2.state.bookTitle[i]
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'book-author' },
+                            _this2.state.bookAuthor[i]
                         )
                     ));
                 });

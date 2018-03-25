@@ -129,6 +129,7 @@ class GoogleBooks extends React.Component{
                      <div className="book-cover"><img src={this.state.bookCover[i]}/></div>
                      <a href={this.state.bookPreview[i]}>Preview</a>  
                      <div className="book-title">{this.state.bookTitle[i]}</div>    
+                     <div className="book-author">{this.state.bookAuthor[i]}</div>    
                 </div>
             )
          })
