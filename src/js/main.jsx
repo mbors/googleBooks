@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import idx from 'idx';
+import {Book} from './components/book.jsx'; 
 
 class GoogleBooks extends React.Component{
     constructor(props){
@@ -8,10 +9,7 @@ class GoogleBooks extends React.Component{
         this.state = {
          bookSearched: "",
          responseLength: 0,
-         bookCover: [],
-         bookAuthor: [],
-         bookTitle: [],
-         bookPreview: [],
+         book: [],
          error: "no",
          startIndex: 0,
          pageNumber: 1,
@@ -31,45 +29,21 @@ class GoogleBooks extends React.Component{
            if(data.totalItems != 0){
                 let itemsCount = data.items.length; 
                 let totalItems = data.totalItems;
-                let myBookCover = [];
-                let myBookAuthor = [];
-                let myBookTitle= [];
-                let volumeInfo = [];
-                let myBookPreview = [];
-        
-                const { items } = data;
-            
-                items.forEach(item => {
-                    console.log("to jest moj item" + item)
-                    
-                    const thumbnail = idx(item, _ => _.volumeInfo.imageLinks.thumbnail) || console.log("to jest ____" + _.volumeInfo.imageLinks.thumbnail) + 'img/NoBookCover.png';
-                    const authors = idx(item, _ => _.volumeInfo.authors) || 'No Author Information Available';
-                    const title = idx(item, _ => _.volumeInfo.title) || 'No Title Information Available';
-                    const preview = idx(item, _ => _.volumeInfo.previewLink) || '';
-                    myBookCover.push(thumbnail);
-                    myBookAuthor.push(authors);
-                    myBookTitle.push(title);
-                    myBookPreview.push(preview);
-                });
-
                 this.setState({
                     responseLength: itemsCount,
-                    bookCover: myBookCover,
-                    bookAuthor: myBookAuthor,
-                    bookTitle: myBookTitle,
-                    bookPreview: myBookPreview, 
+                    book: data.items,
                     error: "no",
                     totalItems: totalItems
                 })
            } else {
                this.setState({
-                   error: "yes"
+                   error: "yes",
+                   book: []
                })
            }
         }
     )       
 }
-   
  
     //get input on the searched book
     handleSearchChange = (e) => {
@@ -88,7 +62,6 @@ class GoogleBooks extends React.Component{
             pageNumber: 1,
         })
     }
-    
     
     handlePrev = () =>{
         if(this.state.startIndex > 1 && this.state.pageNumber > 1){
@@ -116,8 +89,6 @@ class GoogleBooks extends React.Component{
     }
   }
 
-
-
     render(){ 
         let error
         let volumeInfo = [];
@@ -125,14 +96,14 @@ class GoogleBooks extends React.Component{
             error = <span className="message">Unfortunately this book cannot be found :(
             </span>
         } else {
-            this.state.bookTitle.forEach((e, i) => {
+            this.state.book.forEach((e) => {
+                //e = the book title
+                //i = the index 
+                
                 volumeInfo.push(
-                 <div className="book-content">
-                     <div className="book-cover"><img src={this.state.bookCover[i]}/></div>
-                     <a href={this.state.bookPreview[i]}>Preview</a>  
-                     <div className="book-title">{this.state.bookTitle[i]}</div>    
-                     <div className="book-author">{this.state.bookAuthor[i]}</div>    
-                </div>
+                    
+                    //I'm rendering my book component here 
+                    <Book book={e}></Book>
             )
          })
 
