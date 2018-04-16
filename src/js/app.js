@@ -9645,9 +9645,11 @@ var GoogleBooks = function (_React$Component) {
 
 
                     items.forEach(function (item) {
+                        console.log("to jest moj item" + item);
+
                         var thumbnail = (0, _idx2.default)(item, function (_) {
                             return _.volumeInfo.imageLinks.thumbnail;
-                        }) || 'img/NoBookCover.png';
+                        }) || console.log("to jest ____" + _.volumeInfo.imageLinks.thumbnail) + 'img/NoBookCover.png';
                         var authors = (0, _idx2.default)(item, function (_) {
                             return _.volumeInfo.authors;
                         }) || 'No Author Information Available';
